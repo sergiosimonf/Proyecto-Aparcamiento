@@ -11,22 +11,6 @@ class ProfesorRepositoryImpl(
     private val dataBaseService: DataBaseService
 ) : ProfesorRepository {
 
-//    init {
-//        cargarEjemplos()
-//    }
-
-//    private fun cargarEjemplos() {
-//        logger.debug { "Iniciando base de datos con algunos valores por defecto" }
-//
-//        val datosEjemplo = mutableListOf<Profesor>()
-//
-//        datosEjemplo.add(Profesor("53906421X", "Sergio", "Simón Fernández"))
-//        datosEjemplo.add(Profesor("55555555B", "Samuel", "Sánchez Gutierrez"))
-//        datosEjemplo.add(Profesor("99999999D", "Pepe", "Palotes García"))
-//
-//        saveAll(datosEjemplo)
-//    }
-
     override fun findByDni(dni: String): Profesor? {
         logger.debug { "Buscando profesor con dni $dni" }
         val sql = "SELECT * FROM profesores WHERE dni = ?"
@@ -59,6 +43,20 @@ class ProfesorRepositoryImpl(
                 stm.executeUpdate()
             }
         }
+    }
+
+    override fun updateByDni(profesor: Profesor): Profesor {
+        val sql = "UPDATE profesores SET nombre = ?, apellido = ? WHERE dni = ?"
+        dataBaseService.db.use {
+            it.prepareStatement(sql).use { stm ->
+                stm.setString(1, profesor.nombre)
+                stm.setString(2, profesor.apellido)
+                stm.setString(3, profesor.dni)
+
+                stm.executeUpdate()
+            }
+        }
+        return profesor
     }
 
     override fun findAll(): List<Profesor> {
@@ -95,7 +93,7 @@ class ProfesorRepositoryImpl(
         return profesor
     }
 
-    fun saveAll(profesores : List<Profesor>): List<Profesor> {
+    override fun saveAll(profesores : List<Profesor>): List<Profesor> {
         logger.debug { "Guardando todas los profesores" }
 
         profesores.forEach {

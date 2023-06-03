@@ -1,11 +1,23 @@
 package dev.sergiosf.proyectoaparcamiento.controllers
 
+import com.github.michaelbull.result.Err
+import com.github.michaelbull.result.Ok
+import com.github.michaelbull.result.Result
+import dev.sergiosf.proyectoaparcamiento.errors.VehiculoError
+import dev.sergiosf.proyectoaparcamiento.models.Aparcamiento
+import dev.sergiosf.proyectoaparcamiento.models.Vehiculo
+import dev.sergiosf.proyectoaparcamiento.viewmodels.AparcamientoViewModels
+import javafx.collections.FXCollections
 import javafx.fxml.FXML
-import javafx.scene.control.Button
-import javafx.scene.control.ComboBox
-import javafx.scene.control.TextField
+import javafx.scene.control.*
+import mu.KotlinLogging
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
+import java.time.LocalDate
 
-class AparcarController {
+private val logger = KotlinLogging.logger {}
+
+class AparcarController: KoinComponent {
     @FXML
     lateinit var btnAgregar: Button
 
@@ -13,7 +25,7 @@ class AparcarController {
     lateinit var btnCancelar: Button
 
     @FXML
-    lateinit var comboMatricula: ComboBox<Any>
+    lateinit var comboMatricula: ComboBox<String>
 
     @FXML
     lateinit var textTipoVehiculo: TextField
@@ -32,4 +44,101 @@ class AparcarController {
 
     @FXML
     lateinit var textPropietarioDni: TextField
+
+    private val viewModel: AparcamientoViewModels by inject()
+
+    @FXML
+    fun initialize() {
+        logger.debug { "Inicializando la vista para aparcar un vehiculo" }
+
+        // Iniciamos los bindings
+        initBindings()
+
+        // Iniciamos los eventos
+        initEventos()
+    }
+
+    private fun initBindings() {
+        logger.debug { "Iniciamos los bindings" }
+
+        // ComboBox Matricula
+        comboMatricula.items = FXCollections.observableArrayList(viewModel.state.value.vehiculos.map { it.matricula })
+        comboMatricula.selectionModel.selectFirst()
+    }
+
+
+    private fun initEventos() {
+        comboMatricula.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
+            newValue?.let { onComboSelected(it) }
+        }
+
+        btnAgregar.setOnAction {
+            onAparcarAction()
+        }
+
+        btnCancelar.setOnAction {
+            onCancelarAction()
+        }
+    }
+
+    private fun onCancelarAction() {
+        cerrarVentana()
+    }
+
+    private fun cerrarVentana() {
+        // truco coger el stage asociado a un componente
+        btnCancelar.scene.window.hide()
+    }
+
+    private fun onAparcarAction() {
+        logger.debug { "Aparcando un vehiculo ${textTipoVehiculo.text}"}
+
+        if (comboMatricula.value.isEmpty()){
+            return
+        }
+        Alert(Alert.AlertType.CONFIRMATION).apply {
+            title = "Ocupar la plaza"
+            headerText = "¿Desea ocupar la plaza actual?"
+            contentText = "Esta acción no se puede deshacer y no permitirá a otros ocupar su puesto."
+        }.showAndWait().ifPresent { buttonType ->
+            if (buttonType == ButtonType.OK) {
+                if (viewModel.isAparcadoByMatricula(comboMatricula.value)) {
+                    viewModel.ocuparPlaza(recogerDatosFormulario())
+                } else {
+                    Alert(Alert.AlertType.ERROR).apply {
+                        title = "Vehiculo ya aparcado"
+                        headerText = "El vehiculo ya esta en el aparcamiento"
+                        contentText = "El vehiculo ya esta aparcado. No se puede aparcar dos veces el mismo vehiculo"
+                    }.showAndWait()
+                }
+            }
+        }
+    }
+
+    private fun onComboSelected(newValue: String) {
+        logger.debug { "onComboSelected $newValue"}
+        loadForumualrioData(newValue)
+    }
+
+    private fun recogerDatosFormulario(): Aparcamiento {
+        return Aparcamiento(
+            matricula = comboMatricula.value,
+            propietario = textPropietarioNombre.text + " ${textPropietarioApellido.text}",
+            tipoVehiculo = Vehiculo.TipoVehiculo.valueOf(textTipoVehiculo.text)
+        )
+    }
+
+
+    private fun loadForumualrioData(newValue: String) {
+
+        val vehiculo = viewModel.state.value.vehiculos.filter { it.matricula == newValue }.first()
+        val propietario = viewModel.state.value.profesor.filter { it.dni == vehiculo.dniPropietario }.first()
+
+        textPropietarioDni.text = propietario.dni
+        textPropietarioNombre.text = propietario.nombre
+        textPropietarioApellido.text = propietario.apellido
+        textVehiculoMarca.text = vehiculo.marca
+        textVehiculoModelo.text = vehiculo.modelo
+        textTipoVehiculo.text = vehiculo.tipoVehiculo.value
+    }
 }

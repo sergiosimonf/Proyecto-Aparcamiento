@@ -38,4 +38,6 @@ val AppDIModule = module {
         bind<StorageAparcamiento>()
     }
 
+    singleOf(::AparcamientoViewModels)
+
 }

@@ -23,8 +23,8 @@ class DataBaseService(
     }
 
     private fun cargarEjemplos() {
-        cargarEjemplosVehiculos()
         cargarEjemplosProfesores()
+        cargarEjemplosVehiculos()
     }
 
     private fun dropTables() {
@@ -78,7 +78,7 @@ class DataBaseService(
             CREATE TABLE IF NOT EXISTS profesores (
                 dni TEXT NOT NULL PRIMARY KEY,
                 nombre TEXT NOT NULL,
-                apellidos TEXT NOT NULL
+                apellido TEXT NOT NULL
             )
         """.trimIndent()
 
@@ -110,9 +110,10 @@ class DataBaseService(
 
         val datosEjemplo = mutableListOf<Vehiculo>()
 
-        datosEjemplo.add(Vehiculo("1234ABC","53906421X", "Ford", "Mustang", Vehiculo.TipoVehiculo.COMBUSTION))
-        datosEjemplo.add(Vehiculo("1234AAA","55555555B", "Honda", "Civic", Vehiculo.TipoVehiculo.HIBRIDO))
-        datosEjemplo.add(Vehiculo("6969KFC","99999999D", "Volkswagen", "Golf", Vehiculo.TipoVehiculo.ELECTRICO))
+        datosEjemplo.add(Vehiculo("","", "", "", Vehiculo.TipoVehiculo.NONE))
+        datosEjemplo.add(Vehiculo("1234XHS","53906421X", "Ford", "Mustang", Vehiculo.TipoVehiculo.Combustion))
+        datosEjemplo.add(Vehiculo("7895VGT","55555555B", "Honda", "Civic", Vehiculo.TipoVehiculo.Híbrido))
+        datosEjemplo.add(Vehiculo("6969KFC","99999999D", "Volkswagen", "Golf", Vehiculo.TipoVehiculo.Eléctrico))
 
 
         fun save(vehiculo: Vehiculo): Vehiculo {
@@ -149,6 +150,7 @@ class DataBaseService(
 
         val datosEjemplo = mutableListOf<Profesor>()
 
+        datosEjemplo.add(Profesor("", "", ""))
         datosEjemplo.add(Profesor("53906421X", "Sergio", "Simón Fernández"))
         datosEjemplo.add(Profesor("55555555B", "Samuel", "Sánchez Gutierrez"))
         datosEjemplo.add(Profesor("99999999D", "Pepe", "Palotes García"))
@@ -162,20 +164,21 @@ class DataBaseService(
                     stm.setString(1, profesor.dni)
                     stm.setString(2, profesor.nombre)
                     stm.setString(3, profesor.apellido)
+
+                    stm.executeUpdate()
                 }
             }
             return profesor
         }
 
         fun saveAll(profesores : List<Profesor>): List<Profesor> {
-            logger.debug { "Guardando todas los profesores" }
+            logger.debug { "Guardando todos los profesores" }
 
             profesores.forEach {
                 save(it)
             }
             return profesores
         }
-
 
         saveAll(datosEjemplo)
     }

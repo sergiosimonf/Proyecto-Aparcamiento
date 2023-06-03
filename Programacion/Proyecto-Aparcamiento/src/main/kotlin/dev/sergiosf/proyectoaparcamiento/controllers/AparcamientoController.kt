@@ -3,6 +3,7 @@ package dev.sergiosf.proyectoaparcamiento.controllers
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import dev.sergiosf.proyectoaparcamiento.models.Aparcamiento
+import dev.sergiosf.proyectoaparcamiento.models.Vehiculo
 import dev.sergiosf.proyectoaparcamiento.routes.RoutesManager
 import dev.sergiosf.proyectoaparcamiento.viewmodels.AparcamientoViewModels
 import javafx.application.Platform
@@ -13,6 +14,7 @@ import javafx.scene.control.cell.PropertyValueFactory
 import mu.KotlinLogging
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import java.time.LocalDateTime
 
 private val logger = KotlinLogging.logger {}
 
@@ -57,17 +59,17 @@ class AparcamientoController : KoinComponent {
     @FXML
     lateinit var btnAgregar: Button
 
-    @FXML
-    lateinit var tableColumnTipoVehiculo: TableColumn<Any, Any>
+//    @FXML
+//    lateinit var tableColumnTipoVehiculo: TableColumn<Aparcamiento, Vehiculo.TipoVehiculo>
 
     @FXML
-    lateinit var tableColumnFechaIngreso: TableColumn<Any, Any>
+    lateinit var tableColumnFechaIngreso: TableColumn<Aparcamiento, String>
 
     @FXML
-    lateinit var tableColumPropietario: TableColumn<Any, Any>
+    lateinit var tableColumPropietario: TableColumn<Aparcamiento, String>
 
     @FXML
-    lateinit var tableColumnMatricula: TableColumn<Any, Any>
+    lateinit var tableColumnMatricula: TableColumn<Aparcamiento, String>
 
     @FXML
     lateinit var tableVehiculosAparcados: TableView<Aparcamiento>
@@ -81,7 +83,7 @@ class AparcamientoController : KoinComponent {
     private val viewModel: AparcamientoViewModels by inject()
 
     @FXML
-    fun iniciar() {
+    fun initialize() {
         logger.debug { "Inicializando ExpedientesDeViewController FXML" }
 
         // Iniciamos los bindings
@@ -105,7 +107,6 @@ class AparcamientoController : KoinComponent {
         // Valores de las columnas
         tableColumnMatricula.cellValueFactory = PropertyValueFactory("matricula")
         tableColumPropietario.cellValueFactory = PropertyValueFactory("propietario")
-        tableColumnTipoVehiculo.cellValueFactory = PropertyValueFactory("tipoVehiculo")
         tableColumnFechaIngreso.cellValueFactory = PropertyValueFactory("fechaIngreso")
 
         viewModel.state.addListener { _, oldState, newState ->
@@ -137,7 +138,10 @@ class AparcamientoController : KoinComponent {
     ) {
         if (oldState.vehiculoSeleccionado != newState.vehiculoSeleccionado) {
             tableVehiculosAparcados.selectionModel.clearSelection()
-            tableVehiculosAparcados.items = FXCollections.observableArrayList(viewModel.state.value.listaAparcados)
+//            tableVehiculosAparcados.items = FXCollections.observableArrayList(viewModel.state.value.listaAparcados)
+
+            tableVehiculosAparcados.items = FXCollections.observableArrayList(ArrayList(viewModel.state.value.listaAparcados))
+
         }
     }
 
@@ -180,7 +184,18 @@ class AparcamientoController : KoinComponent {
         textBuscador.setOnKeyReleased { newValue ->
             newValue?.let { onKeyReleasedAction() }
         }
+
+        tableVehiculosAparcados.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
+            newValue?.let { onTablaSelected(it)}
+        }
     }
+
+    private fun onTablaSelected(newValue: Aparcamiento) {
+        logger.debug { "onTablaSelected: $newValue" }
+        viewModel.updateVehiculoAparcadoSeleccionado(newValue)
+    }
+
+
 
     private fun onGestionarAction() {
         logger.debug { "onGestionarAction" }
@@ -238,15 +253,11 @@ class AparcamientoController : KoinComponent {
 
     private fun onAgregarAction() {
         logger.debug { "onAgregarAction" }
-
-        if (tableVehiculosAparcados.selectionModel.selectedItem == null){
-            return
-        }
         RoutesManager.initAgregarStage()
     }
 
     private fun onAcercaDeAction() {
-        logger.debug { "Pulsado boton 'Acerca de'" }
+        logger.debug { "Pulsado botón 'Acerca de'" }
         RoutesManager.initAboutStage()
     }
 

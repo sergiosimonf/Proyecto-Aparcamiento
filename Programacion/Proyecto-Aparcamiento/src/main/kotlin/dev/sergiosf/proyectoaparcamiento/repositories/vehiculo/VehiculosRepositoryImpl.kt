@@ -10,33 +10,6 @@ class VehiculosRepositoryImpl(
     private val dataBaseService: DataBaseService
 ) : VehiculosRepository {
 
-//    init {
-//        cargarEjemplos()
-//    }
-
-//    private fun cargarEjemplos() {
-//
-//        logger.debug { "Iniciando base de datos con algunos valores por defecto" }
-//
-//        val datosEjemplo = mutableListOf<Vehiculo>()
-//
-//        datosEjemplo.add(Vehiculo("1234ABC","53906421X", "Ford", "Mustang", TipoVehiculo.COMBUSTION))
-//        datosEjemplo.add(Vehiculo("1234AAA","55555555B", "Honda", "Civic", TipoVehiculo.HIBRIDO))
-//        datosEjemplo.add(Vehiculo("6969KFC","99999999D", "Volkswagen", "Golf", TipoVehiculo.ELECTRICO))
-//
-//
-//        fun saveAll(vehiculos: List<Vehiculo>): List<Vehiculo> {
-//            logger.debug { "Guardando todas los vehiculos" }
-//
-//            vehiculos.forEach {
-//                save(it)
-//            }
-//            return vehiculos
-//        }
-//
-//        saveAll(datosEjemplo)
-//    }
-
     override fun findByMatricula(matricula: String): Vehiculo? {
         logger.debug { "Buscando vehiculo con matricula $matricula" }
         var vehiculo: Vehiculo? = null
@@ -56,6 +29,23 @@ class VehiculosRepositoryImpl(
                         )
                     }
                 }
+            }
+        }
+        return vehiculo
+    }
+
+    override fun updateByMatricula(vehiculo: Vehiculo): Vehiculo {
+        val sql = "UPDATE vehiculos SET matricula = ?, dniPropietario, marca =?, modelo =?,  = ?, WHERE matricula = ?"
+        dataBaseService.db.use {
+            it.prepareStatement(sql).use { stm ->
+
+                stm.setString(1, vehiculo.dniPropietario)
+                stm.setString(2, vehiculo.marca)
+                stm.setString(3, vehiculo.modelo)
+                stm.setString(4, vehiculo.tipoVehiculo.name)
+                stm.setString(5, vehiculo.matricula)
+
+                stm.executeUpdate()
             }
         }
         return vehiculo
@@ -113,12 +103,12 @@ class VehiculosRepositoryImpl(
         return vehiculo
     }
 
-    fun saveAll(vehiculos: List<Vehiculo>): List<Vehiculo> {
+    override fun saveAll(entity: List<Vehiculo>): List<Vehiculo> {
         logger.debug { "Guardando todas los vehiculos" }
 
-        vehiculos.forEach {
+        entity.forEach {
             save(it)
         }
-        return vehiculos
+        return entity
     }
 }

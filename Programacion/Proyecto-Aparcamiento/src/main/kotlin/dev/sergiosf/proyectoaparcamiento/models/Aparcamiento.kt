@@ -5,8 +5,8 @@ import java.time.LocalDateTime
 data class Aparcamiento(
     val matricula: String,
     val tipoVehiculo: Vehiculo.TipoVehiculo,
-    val fechaIngreso: LocalDateTime = LocalDateTime.now(),
+    val fechaIngreso: String = LocalDateTime.now().toString(),
     val propietario: String
 ) {
-    fun isElectrico(): Boolean = tipoVehiculo == Vehiculo.TipoVehiculo.ELECTRICO || tipoVehiculo == Vehiculo.TipoVehiculo.HIBRIDO
+    fun isElectrico(): Boolean = tipoVehiculo == Vehiculo.TipoVehiculo.Eléctrico || tipoVehiculo == Vehiculo.TipoVehiculo.Híbrido
 }

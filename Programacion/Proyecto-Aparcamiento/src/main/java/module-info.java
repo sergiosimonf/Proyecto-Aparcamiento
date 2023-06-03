@@ -17,6 +17,7 @@ module dev.sergiosf.proyectoaparcamiento {
     // Result
     requires kotlin.result.jvm;
     requires java.sql;
+    requires open;
 
     // SqlDeLight
 //    requires runtime.jvm;

@@ -8,7 +8,7 @@ data class Vehiculo(
     val tipoVehiculo: TipoVehiculo
 ) {
     enum class TipoVehiculo(val value: String) {
-        COMBUSTION("Combustion"), HIBRIDO("Híbrido"), ELECTRICO("Eléctrico"), NONE("")
+        Combustion("Combustion"), Híbrido("Híbrido"), Eléctrico("Eléctrico"), NONE("")
     }
 }
 
