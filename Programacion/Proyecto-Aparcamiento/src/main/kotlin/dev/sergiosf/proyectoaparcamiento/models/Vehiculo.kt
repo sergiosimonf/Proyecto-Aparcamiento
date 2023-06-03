@@ -6,8 +6,9 @@ data class Vehiculo(
     val marca: String,
     val modelo: String,
     val tipoVehiculo: TipoVehiculo
-)
-
-enum class TipoVehiculo {
-    COMBUSTION, HIBRIDO, ELECTRICO
+) {
+    enum class TipoVehiculo(val value: String) {
+        COMBUSTION("Combustion"), HIBRIDO("Híbrido"), ELECTRICO("Eléctrico"), NONE("")
+    }
 }
+

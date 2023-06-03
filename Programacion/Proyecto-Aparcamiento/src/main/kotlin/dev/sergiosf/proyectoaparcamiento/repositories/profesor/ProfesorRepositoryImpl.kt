@@ -1,6 +1,7 @@
 package dev.sergiosf.proyectoaparcamiento.repositories.profesor
 
 import dev.sergiosf.proyectoaparcamiento.models.Profesor
+import dev.sergiosf.proyectoaparcamiento.models.Vehiculo
 import dev.sergiosf.proyectoaparcamiento.service.database.DataBaseService
 import mu.KotlinLogging
 
@@ -9,6 +10,22 @@ private val logger = KotlinLogging.logger {}
 class ProfesorRepositoryImpl(
     private val dataBaseService: DataBaseService
 ) : ProfesorRepository {
+
+//    init {
+//        cargarEjemplos()
+//    }
+
+//    private fun cargarEjemplos() {
+//        logger.debug { "Iniciando base de datos con algunos valores por defecto" }
+//
+//        val datosEjemplo = mutableListOf<Profesor>()
+//
+//        datosEjemplo.add(Profesor("53906421X", "Sergio", "Simón Fernández"))
+//        datosEjemplo.add(Profesor("55555555B", "Samuel", "Sánchez Gutierrez"))
+//        datosEjemplo.add(Profesor("99999999D", "Pepe", "Palotes García"))
+//
+//        saveAll(datosEjemplo)
+//    }
 
     override fun findByDni(dni: String): Profesor? {
         logger.debug { "Buscando profesor con dni $dni" }
@@ -76,5 +93,14 @@ class ProfesorRepositoryImpl(
             }
         }
         return profesor
+    }
+
+    fun saveAll(profesores : List<Profesor>): List<Profesor> {
+        logger.debug { "Guardando todas los profesores" }
+
+        profesores.forEach {
+            save(it)
+        }
+        return profesores
     }
 }

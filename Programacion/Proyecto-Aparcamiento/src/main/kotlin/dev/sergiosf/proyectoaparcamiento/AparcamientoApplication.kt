@@ -12,7 +12,6 @@ class AparcamientoApplication : Application() {
         startKoin {
             printLogger()
             modules(AppDIModule)
-
         }
         RoutesManager.apply {
             app = this@AparcamientoApplication

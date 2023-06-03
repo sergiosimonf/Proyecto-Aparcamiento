@@ -10,7 +10,7 @@ private val logger = KotlinLogging.logger {}
 
 private const val CONFIG_FILE_NAME = "application.properties"
 
-class AppConfig : KoinComponent {
+class AppConfig() : KoinComponent {
 
     val databaseUrl: String by lazy {
         readProperty("app.database.url") ?: "jdbc:sqlite:database.db"
