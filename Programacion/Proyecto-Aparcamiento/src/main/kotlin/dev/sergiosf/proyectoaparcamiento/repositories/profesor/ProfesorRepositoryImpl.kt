@@ -1,7 +1,6 @@
 package dev.sergiosf.proyectoaparcamiento.repositories.profesor
 
 import dev.sergiosf.proyectoaparcamiento.models.Profesor
-import dev.sergiosf.proyectoaparcamiento.models.Vehiculo
 import dev.sergiosf.proyectoaparcamiento.service.database.DataBaseService
 import mu.KotlinLogging
 
@@ -88,12 +87,14 @@ class ProfesorRepositoryImpl(
                 stm.setString(1, profesor.dni)
                 stm.setString(2, profesor.nombre)
                 stm.setString(3, profesor.apellido)
+
+                stm.executeUpdate()
             }
         }
         return profesor
     }
 
-    override fun saveAll(profesores : List<Profesor>): List<Profesor> {
+    override fun saveAll(profesores: List<Profesor>): List<Profesor> {
         logger.debug { "Guardando todas los profesores" }
 
         profesores.forEach {

@@ -15,6 +15,7 @@ import dev.sergiosf.proyectoaparcamiento.validators.validar
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.control.Alert
 import mu.KotlinLogging
+import java.io.File
 
 private val logger = KotlinLogging.logger {}
 
@@ -35,7 +36,7 @@ class AparcamientoViewModels(
         loadTiposMotor()
     }
 
-    fun loadDataFromRepository() {
+    private fun loadDataFromRepository() {
         logger.debug { "Cargando vehículos y propietarios del repositorio" }
         val listaVehiculos = repositoryVehiculo.findAll()
         val listaProfesores = repositoryProfesor.findAll()
@@ -62,6 +63,17 @@ class AparcamientoViewModels(
 
         repositoryVehiculo.deleteByMatricula(vehiculo.matricula)
         repositoryProfesor.deleteByDni(usuario.dni)
+
+        if (repositoryAparcamiento.findByMatricula(vehiculo.matricula) != null) {
+            repositoryAparcamiento.deleteByMatricula(vehiculo.matricula)
+        }
+
+        loadDataFromRepository()
+    }
+
+    fun saveBackupData(file: File): Result<Long, VehiculoError> {
+        logger.debug { "Guardando copia de seguridad en JSON" }
+        return storageAparcamiento.save(file, state.value.vehiculos, state.value.profesor)
     }
 
     private fun updateStateProfesores(
@@ -116,8 +128,10 @@ class AparcamientoViewModels(
         return newVehiculo.validar()
             .andThen {
                 val new = repositoryVehiculo.save(newVehiculo)
-                updateStateVehiculos(state.value.vehiculos + new)
+                loadDataFromRepository()
                 Ok(new)
+            }.onFailure {
+                logger.error("Error al validar al vehiculo")
             }
     }
 
@@ -125,8 +139,10 @@ class AparcamientoViewModels(
         return newProfesor.validar()
             .andThen {
                 val new = repositoryProfesor.save(newProfesor)
-                updateStateProfesores(state.value.profesor + new)
+                loadDataFromRepository()
                 Ok(new)
+            }.onFailure {
+                logger.error("Error al validar al profesor")
             }
     }
 
@@ -177,7 +193,7 @@ class AparcamientoViewModels(
         val numCapacidad: Int = 0,
 
         // siempre que cambia el tipo de operacion, se actualiza el alumno
-        val vehiculoSeleccionado: VehiculoYPropietarioFormulario = VehiculoYPropietarioFormulario(), // Vehículo seleccionado en tabla
+        var vehiculoSeleccionado: VehiculoYPropietarioFormulario = VehiculoYPropietarioFormulario(), // Vehículo seleccionado en tabla
     )
 
     data class VehiculoYPropietarioFormulario(
@@ -218,7 +234,7 @@ class AparcamientoViewModels(
 
         return state.value.listaAparcados
             .filter { aparcado ->
-                when(tipo) {
+                when (tipo) {
                     TipoFiltro.ELECTRICO.value -> aparcado.isElectrico()
                     TipoFiltro.COMBUSTION.value -> !aparcado.isElectrico()
                     else -> true
@@ -227,6 +243,15 @@ class AparcamientoViewModels(
                 aparcado.propietario.contains(nombreCompleto, true)
             }
     }
+
+    fun isDniRegistrado(dni: String): Boolean {
+        return repositoryProfesor.findByDni(dni) != null
+    }
+
+    fun isMatriculaRegistrado(matricula: String): Boolean {
+        return repositoryVehiculo.findByMatricula(matricula) != null
+    }
+
 
     fun updateVehiculoAparcadoSeleccionado(aparcado: Aparcamiento) {
         logger.debug { "Actualizando estado de Vehiculo aparcado: $aparcado" }
@@ -241,7 +266,7 @@ class AparcamientoViewModels(
             matricula = vehiculo.matricula,
             marca = vehiculo.marca,
             modelo = vehiculo.modelo,
-            tipoVehiculo= vehiculo.tipoVehiculo
+            tipoVehiculo = vehiculo.tipoVehiculo
         )
 
         state.value = state.value.copy(vehiculoSeleccionado = vehiculoYPropietarioFormulario)
@@ -256,23 +281,30 @@ class AparcamientoViewModels(
     }
 
     private fun editarVehiculo(newVehiculo: Vehiculo): Result<Vehiculo, VehiculoError> {
+        logger.debug { "Preparando para editar un vehiculo" }
         return newVehiculo.validar()
-            .andThen {
-                val new = repositoryVehiculo.updateByMatricula(it)
-                updateStateVehiculos(state.value.vehiculos + new)
+            .onSuccess {
+                logger.debug { "Vehiculo validado procediendo a editarlo" }
+                val new = repositoryVehiculo.updateByMatricula(newVehiculo)
+                loadDataFromRepository()
                 Ok(new)
+            }.onFailure {
+                logger.warn { "Error al validar el vehiculo" }
             }
     }
 
     private fun editarProfesor(newProfesor: Profesor): Result<Profesor, PersonaError> {
+        logger.debug { "Preparando para editar un profesor" }
         return newProfesor.validar()
-            .andThen {
+            .onSuccess {
+                logger.debug { "Profesor validado procediendo a editarlo" }
                 val new = repositoryProfesor.updateByDni(newProfesor)
                 updateStateProfesores(state.value.profesor + new)
                 Ok(new)
+            }.onFailure {
+                logger.warn { "Error al validar el profesor" }
             }
     }
-
 
     enum class TipoFiltro(val value: String) {
         TODOS("Todos/as"), ELECTRICO("Eléctrico/Híbrido"), COMBUSTION("Combustion")

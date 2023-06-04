@@ -8,8 +8,7 @@ import dev.sergiosf.proyectoaparcamiento.models.Profesor
 
 fun Profesor.validar(): Result<Profesor, PersonaError> {
 
-    val dniRegex = "^[0-9]{8,8}[A-Za-z]\$\n".toRegex()
-    val stringRegex = "[a-zA-Z]+\\d*".toRegex()
+    val dniRegex = "^[0-9]{8,8}[A-Za-z]".toRegex()
 
     if (this.nombre.isEmpty()) {
         return Err(PersonaError.ParametroNoIntroducido("El nombre no puede estar vacio"))
@@ -21,14 +20,6 @@ fun Profesor.validar(): Result<Profesor, PersonaError> {
 
     if (!dniRegex.matches(this.dni)) {
         return Err(PersonaError.ValidateProblem("El dni esta mal formado"))
-    }
-
-    if (stringRegex.matches(this.nombre)) {
-        return Err(PersonaError.ValidateProblem("El nombre esta mal formado"))
-    }
-
-    if (!stringRegex.matches(this.apellido)) {
-        return Err(PersonaError.ValidateProblem("El apellido esta mal formado"))
     }
 
     return Ok(this)

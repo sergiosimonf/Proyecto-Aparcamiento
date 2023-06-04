@@ -4,7 +4,6 @@ import dev.sergiosf.proyectoaparcamiento.models.Aparcamiento
 import dev.sergiosf.proyectoaparcamiento.models.Vehiculo
 import dev.sergiosf.proyectoaparcamiento.service.database.DataBaseService
 import mu.KotlinLogging
-import java.time.LocalDateTime
 
 private val logger = KotlinLogging.logger {}
 

@@ -16,6 +16,8 @@ import java.util.*
 
 private val logger = KotlinLogging.logger {}
 
+const val ICON_APP = "images/car-icon.png"
+
 object RoutesManager {
 
     private lateinit var mainStage: Stage
@@ -33,7 +35,7 @@ object RoutesManager {
     enum class View(val fxml: String) {
         MAIN("views/main-view.fxml"),
         ABOUT("views/about-view.fxml"),
-        AGREAGAR("views/agregar-view.fxml"),
+        AGREGAR("views/agregar-view.fxml"),
         GESTIONAR("views/gestionar-view.fxml"),
         APARCAR("views/aparcar-view.fxml")
     }
@@ -45,7 +47,7 @@ object RoutesManager {
         val parentRoot = fxml.load<Pane>()
         val scene = Scene(parentRoot, 694.0, 517.0)
         stage.title = "Concesionario"
-        stage.icons.add(Image(getResourceAsStream("images/car-icon.png")))
+        stage.icons.add(Image(getResourceAsStream(ICON_APP)))
         stage.setOnCloseRequest {
             Alert(Alert.AlertType.WARNING)
                 .apply {
@@ -60,7 +62,7 @@ object RoutesManager {
         mainStage.show()
     }
 
-    fun initAparcarStage(){
+    fun initAparcarStage() {
         logger.debug { "Iniciando la vista 'Aparcar'" }
 
         val fxml = FXMLLoader(this.getResource(View.APARCAR.fxml))
@@ -69,7 +71,7 @@ object RoutesManager {
         val stage = Stage()
         stage.title = "Aparcar un vehiculo"
         stage.isResizable = false
-        stage.icons.add(Image(this.getResourceAsStream("images/car-icon.png")))
+        stage.icons.add(Image(this.getResourceAsStream(ICON_APP)))
         stage.scene = scene
         stage.initOwner(mainStage)
         stage.initModality(Modality.WINDOW_MODAL)
@@ -79,7 +81,7 @@ object RoutesManager {
         stage.show()
     }
 
-    fun initGestionarStage(){
+    fun initGestionarStage() {
         logger.debug { "Iniciando la vista 'Gestionar'" }
 
         val fxml = FXMLLoader(this.getResource(View.GESTIONAR.fxml))
@@ -88,7 +90,7 @@ object RoutesManager {
         val stage = Stage()
         stage.title = "Gestionar datos"
         stage.isResizable = false
-        stage.icons.add(Image(this.getResourceAsStream("images/car-icon.png")))
+        stage.icons.add(Image(this.getResourceAsStream(ICON_APP)))
         stage.scene = scene
         stage.initOwner(mainStage)
         stage.initModality(Modality.WINDOW_MODAL)
@@ -98,16 +100,16 @@ object RoutesManager {
         stage.show()
     }
 
-    fun initAgregarStage(){
+    fun initAgregarStage() {
         logger.debug { "Iniciando la vista 'Agregar'" }
 
-        val fxml = FXMLLoader(this.getResource(View.AGREAGAR.fxml))
+        val fxml = FXMLLoader(this.getResource(View.AGREGAR.fxml))
         val parentRoot = fxml.load<Pane>()
         val scene = Scene(parentRoot, 319.0, 460.0)
         val stage = Stage()
         stage.title = "Agregar datos"
         stage.isResizable = false
-        stage.icons.add(Image(this.getResourceAsStream("images/car-icon.png")))
+        stage.icons.add(Image(this.getResourceAsStream(ICON_APP)))
         stage.scene = scene
         stage.initOwner(mainStage)
         stage.initModality(Modality.WINDOW_MODAL)
@@ -126,7 +128,7 @@ object RoutesManager {
         val stage = Stage()
         stage.title = "Concesionario"
         stage.isResizable = false
-        stage.icons.add(Image(this.getResourceAsStream("images/car-icon.png")))
+        stage.icons.add(Image(this.getResourceAsStream(ICON_APP)))
         stage.scene = scene
         stage.initOwner(mainStage)
         stage.initModality(Modality.WINDOW_MODAL)

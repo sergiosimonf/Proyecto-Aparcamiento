@@ -35,7 +35,7 @@ class VehiculosRepositoryImpl(
     }
 
     override fun updateByMatricula(vehiculo: Vehiculo): Vehiculo {
-        val sql = "UPDATE vehiculos SET matricula = ?, dniPropietario, marca =?, modelo =?,  = ?, WHERE matricula = ?"
+        val sql = "UPDATE vehiculos SET dniPropietario =?, marca =?, modelo =?, tipoVehiculo = ? WHERE matricula = ?"
         dataBaseService.db.use {
             it.prepareStatement(sql).use { stm ->
 

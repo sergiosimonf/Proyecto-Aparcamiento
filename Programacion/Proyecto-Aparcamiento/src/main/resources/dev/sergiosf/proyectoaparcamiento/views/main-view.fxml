@@ -51,9 +51,9 @@
                                 </HBox>
                                 <TableView fx:id="tableVehiculosAparcados" prefHeight="374.0" prefWidth="406.0">
                                     <columns>
-                                        <TableColumn fx:id="tableColumnMatricula" editable="false" prefWidth="130.0" text="Matrícula" />
-                                        <TableColumn fx:id="tableColumPropietario" editable="false" minWidth="-1.0" prefWidth="119.0" text="Propietario" />
-                                        <TableColumn fx:id="tableColumnFechaIngreso" editable="false" prefWidth="156.0" text="Fecha Entrada" />
+                                        <TableColumn fx:id="tableColumnMatricula" editable="false" prefWidth="118.0" text="Matrícula" />
+                                        <TableColumn fx:id="tableColumPropietario" editable="false" minWidth="-1.0" prefWidth="181.0" text="Propietario" />
+                                        <TableColumn fx:id="tableColumnFechaIngreso" editable="false" prefWidth="106.0" text="Fecha Entrada" />
                                     </columns>
                                 </TableView>
                                 <HBox prefHeight="63.0" prefWidth="360.0">
@@ -211,6 +211,28 @@
                         </MenuItem>
                     </items>
                 </Menu>
+            <Menu mnemonicParsing="false" text="Backup">
+               <items>
+                  <MenuItem fx:id="menuExportar" mnemonicParsing="false" text="Exportar">
+                     <graphic>
+                        <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../icons/file-export.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </MenuItem>
+                  <MenuItem fx:id="menuImportar" mnemonicParsing="false" text="Importar">
+                     <graphic>
+                        <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../icons/file-import.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </MenuItem>
+               </items>
+            </Menu>
             </menus>
         </MenuBar>
     </children>

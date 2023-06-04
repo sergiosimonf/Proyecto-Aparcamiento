@@ -1,24 +1,32 @@
 package dev.sergiosf.proyectoaparcamiento.controllers
 
+import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import dev.sergiosf.proyectoaparcamiento.models.Aparcamiento
-import dev.sergiosf.proyectoaparcamiento.models.Vehiculo
 import dev.sergiosf.proyectoaparcamiento.routes.RoutesManager
 import dev.sergiosf.proyectoaparcamiento.viewmodels.AparcamientoViewModels
 import javafx.application.Platform
 import javafx.collections.FXCollections
 import javafx.fxml.FXML
+import javafx.scene.Cursor
 import javafx.scene.control.*
 import javafx.scene.control.cell.PropertyValueFactory
+import javafx.stage.FileChooser
 import mu.KotlinLogging
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import java.time.LocalDateTime
+import java.io.File
 
 private val logger = KotlinLogging.logger {}
 
 class AparcamientoController : KoinComponent {
+
+    @FXML
+    lateinit var menuImportar: MenuItem
+
+    @FXML
+    lateinit var menuExportar: MenuItem
 
     @FXML
     lateinit var menuAcercaDe: MenuItem
@@ -58,9 +66,6 @@ class AparcamientoController : KoinComponent {
 
     @FXML
     lateinit var btnAgregar: Button
-
-//    @FXML
-//    lateinit var tableColumnTipoVehiculo: TableColumn<Aparcamiento, Vehiculo.TipoVehiculo>
 
     @FXML
     lateinit var tableColumnFechaIngreso: TableColumn<Aparcamiento, String>
@@ -111,8 +116,7 @@ class AparcamientoController : KoinComponent {
 
         viewModel.state.addListener { _, oldState, newState ->
             updatesFormulario(oldState, newState)
-
-            updatesTabla(newState, oldState)
+            updatesTabla()
         }
 
     }
@@ -133,16 +137,9 @@ class AparcamientoController : KoinComponent {
     }
 
     private fun updatesTabla(
-        oldState: AparcamientoViewModels.AparcamientoState,
-        newState: AparcamientoViewModels.AparcamientoState
     ) {
-        if (oldState.vehiculoSeleccionado != newState.vehiculoSeleccionado) {
-            tableVehiculosAparcados.selectionModel.clearSelection()
-//            tableVehiculosAparcados.items = FXCollections.observableArrayList(viewModel.state.value.listaAparcados)
-
-            tableVehiculosAparcados.items = FXCollections.observableArrayList(ArrayList(viewModel.state.value.listaAparcados))
-
-        }
+        tableVehiculosAparcados.selectionModel.clearSelection()
+        tableVehiculosAparcados.items = FXCollections.observableArrayList(viewModel.state.value.listaAparcados)
     }
 
     private fun initEventos() {
@@ -153,6 +150,14 @@ class AparcamientoController : KoinComponent {
 
         menuSalir.setOnAction {
             onSalirAction()
+        }
+
+        menuExportar.setOnAction {
+            onExportarAction()
+        }
+
+        menuImportar.setOnAction {
+
         }
 
         // Botones
@@ -186,7 +191,31 @@ class AparcamientoController : KoinComponent {
         }
 
         tableVehiculosAparcados.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
-            newValue?.let { onTablaSelected(it)}
+            newValue?.let { onTablaSelected(it) }
+        }
+    }
+
+    private fun onExportarAction() {
+        logger.debug { "onExportarAction" }
+
+        FileChooser().run {
+            title = "Exportar expedientes"
+            extensionFilters.add(FileChooser.ExtensionFilter("JSON", "*.json"))
+            showSaveDialog(RoutesManager.activeStage)
+        }?.let {
+            logger.debug { "onSaveAction: $it" }
+            RoutesManager.activeStage.scene.cursor = Cursor.WAIT
+            viewModel.saveBackupData(it)
+                .onSuccess {
+                    showAlertOperacion(
+                        title = "Datos exportados",
+                        header = "Datos exportados correctamente a fichero JSON",
+                        mensaje = "Se ha exportado tus datos desde el fichero de gestión.\nVehículos y propietarios exportados: ${viewModel.state.value.vehiculos.size}"
+                    )
+                }.onFailure { error ->
+                    showAlertOperacion(alerta = Alert.AlertType.ERROR, title = "Error al exportar", mensaje = error.message)
+                }
+            RoutesManager.activeStage.scene.cursor = Cursor.DEFAULT
         }
     }
 
@@ -196,6 +225,18 @@ class AparcamientoController : KoinComponent {
     }
 
 
+    private fun showAlertOperacion(
+        alerta: Alert.AlertType = Alert.AlertType.CONFIRMATION,
+        title: String = "",
+        header: String = "",
+        mensaje: String = ""
+    ) {
+        Alert(alerta).apply {
+            this.title = title
+            this.headerText = header
+            this.contentText = mensaje
+        }.showAndWait()
+    }
 
     private fun onGestionarAction() {
         logger.debug { "onGestionarAction" }
@@ -275,7 +316,7 @@ class AparcamientoController : KoinComponent {
     }
 
     private fun onComboSelected(newValue: String) {
-        logger.debug { "onComboSelected $newValue"}
+        logger.debug { "onComboSelected $newValue" }
         filterDataTable()
     }
 

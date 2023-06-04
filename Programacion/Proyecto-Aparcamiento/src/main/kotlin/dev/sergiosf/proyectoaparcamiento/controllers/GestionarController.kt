@@ -1,9 +1,6 @@
 package dev.sergiosf.proyectoaparcamiento.controllers
 
-import com.github.michaelbull.result.Err
-import com.github.michaelbull.result.Ok
-import com.github.michaelbull.result.Result
-import com.github.michaelbull.result.onSuccess
+import com.github.michaelbull.result.*
 import dev.sergiosf.proyectoaparcamiento.errors.PersonaError
 import dev.sergiosf.proyectoaparcamiento.models.Vehiculo
 import dev.sergiosf.proyectoaparcamiento.viewmodels.AparcamientoViewModels
@@ -16,7 +13,7 @@ import org.koin.core.component.inject
 
 private val logger = KotlinLogging.logger {}
 
-class GestionarController: KoinComponent {
+class GestionarController : KoinComponent {
 
     @FXML
     lateinit var comboTipoVehiculo: ComboBox<String>
@@ -62,6 +59,10 @@ class GestionarController: KoinComponent {
     }
 
     private fun initEventos() {
+        comboMatricula.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
+            newValue?.let { onComboSelected(it) }
+        }
+
         btnCancelar.setOnAction {
             onCancelarAction()
         }
@@ -76,17 +77,33 @@ class GestionarController: KoinComponent {
     }
 
     private fun onEditarAction() {
-        if (comboMatricula.value.isEmpty()){
+        if (comboMatricula.value.isEmpty()) {
             return
         }
         Alert(Alert.AlertType.CONFIRMATION).apply {
             title = "Atención"
             headerText = "¿Desea editar el usuario y vehiculo?"
-            contentText = "¡Esta acción no se puede deshacer!. Va a editar el usuario y vehiculo asociado con la siguiente matricula ${comboMatricula.value}"
+            contentText =
+                "¡Esta acción no se puede deshacer!. Va a editar el usuario y vehiculo asociado con la siguiente matricula ${comboMatricula.value}"
         }.showAndWait().ifPresent { buttonType ->
             if (buttonType == ButtonType.OK) {
                 validateForm().onSuccess {
-                    viewModel.editarVehiculoPropietario(it)
+                    if (!viewModel.isDniRegistrado(it.dni)) {
+                        viewModel.editarVehiculoPropietario(it)
+                    } else {
+                        Alert(Alert.AlertType.ERROR).apply {
+                            title = "Error al guardar"
+                            headerText = "Se ha producido un error al guardar"
+                            contentText = "El dni ya esta registrado"
+                        }.showAndWait()
+                    }
+                    cerrarVentana()
+                }.onFailure { e ->
+                    Alert(Alert.AlertType.ERROR).apply {
+                        title = "Error al editar"
+                        headerText = "Se ha producido un error al editar"
+                        contentText = e.message
+                    }.showAndWait()
                 }
             }
         }
@@ -95,8 +112,7 @@ class GestionarController: KoinComponent {
     private fun validateForm(): Result<AparcamientoViewModels.VehiculoYPropietarioFormulario, PersonaError> {
         logger.debug { "validateForm" }
 
-        val dniRegex = "^[0-9]{8,8}[A-Za-z]\$\n".toRegex()
-        val stringRegex = "[a-zA-Z]+\\d*".toRegex()
+        val dniRegex = "^[0-9]{8,8}[A-Za-z]".toRegex()
 
         if (textPropietarioNombre.text.isEmpty()) {
             return Err(PersonaError.ParametroNoIntroducido("El nombre no puede estar vacio"))
@@ -108,14 +124,6 @@ class GestionarController: KoinComponent {
 
         if (!dniRegex.matches(textPropietarioDni.text)) {
             return Err(PersonaError.ValidateProblem("El dni esta mal formado"))
-        }
-
-        if (stringRegex.matches(textPropietarioNombre.text)) {
-            return Err(PersonaError.ValidateProblem("El nombre esta mal formado"))
-        }
-
-        if (!stringRegex.matches(textPropietarioApellido.text)) {
-            return Err(PersonaError.ValidateProblem("El apellido esta mal formado"))
         }
 
         val matriculaRegex = "^[0-9]{1,4}(?!.*(LL|CH))[BCDFGHJKLMNPRSTVWXYZ]{3}".toRegex()
@@ -132,10 +140,7 @@ class GestionarController: KoinComponent {
             return Err(PersonaError.ParametroNoIntroducido("El modelo no ha sido introducido"))
         }
 
-        if (Vehiculo.TipoVehiculo.valueOf(comboTipoVehiculo.value) != Vehiculo.TipoVehiculo.Combustion || Vehiculo.TipoVehiculo.valueOf(
-                comboTipoVehiculo.value
-            ) != Vehiculo.TipoVehiculo.Eléctrico || Vehiculo.TipoVehiculo.valueOf(comboTipoVehiculo.value) != Vehiculo.TipoVehiculo.Híbrido
-        ) {
+        if (comboTipoVehiculo.value == Vehiculo.TipoVehiculo.NONE.value) {
             return Err(PersonaError.ValidateProblem("El tipo vehiculo no exite o no es valido"))
         }
 
@@ -157,16 +162,18 @@ class GestionarController: KoinComponent {
     }
 
     private fun eliminarVehiculoPropietario() {
-        if (comboMatricula.value.isEmpty()){
+        if (comboMatricula.value.isEmpty()) {
             return
         }
         Alert(Alert.AlertType.CONFIRMATION).apply {
             title = "Atención"
             headerText = "¿Desea eliminar el usuario y vehiculo?"
-            contentText = "¡Esta acción no se puede deshacer!. Va a eliminar el usuario y vehiculo asociado con la siguiente matricula ${comboMatricula.value}"
+            contentText =
+                "¡Esta acción no se puede deshacer!. Va a eliminar el usuario y vehiculo asociado con la siguiente matricula ${comboMatricula.value}"
         }.showAndWait().ifPresent { buttonType ->
             if (buttonType == ButtonType.OK) {
                 viewModel.deleteVehiculoPropietario(comboMatricula.value)
+                cerrarVentana()
             }
         }
     }
@@ -183,6 +190,24 @@ class GestionarController: KoinComponent {
     private fun onCancelarAction() {
         logger.debug { "onCancelarAction" }
         cerrarVentana()
+    }
+
+    private fun onComboSelected(newValue: String) {
+        logger.debug { "onComboSelected $newValue" }
+        loadForumualrioData(newValue)
+    }
+
+    private fun loadForumualrioData(newValue: String) {
+        val vehiculo = viewModel.state.value.vehiculos.filter { it.matricula == newValue }.last()
+        val propietario = viewModel.state.value.profesor.filter { it.dni == vehiculo.dniPropietario }.last()
+
+        textPropietarioDni.text = propietario.dni
+        textPropietarioNombre.text = propietario.nombre
+        textPropietarioApellido.text = propietario.apellido
+        comboMatricula.value = vehiculo.matricula
+        textVehiculoMarca.text = vehiculo.marca
+        textVehiculoModelo.text = vehiculo.modelo
+        comboTipoVehiculo.value = vehiculo.tipoVehiculo.value
     }
 
     private fun cerrarVentana() {

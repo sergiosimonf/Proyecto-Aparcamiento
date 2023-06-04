@@ -22,7 +22,7 @@ fun Vehiculo.validar(): Result<Vehiculo, VehiculoError> {
         return Err(VehiculoError.ParametroNoIntroducido("El modelo no ha sido introducido"))
     }
 
-    if (this.tipoVehiculo != Vehiculo.TipoVehiculo.Combustion || this.tipoVehiculo != Vehiculo.TipoVehiculo.Eléctrico || this.tipoVehiculo != Vehiculo.TipoVehiculo.Híbrido) {
+    if (this.tipoVehiculo == Vehiculo.TipoVehiculo.NONE) {
         return Err(VehiculoError.ParametroInvalido("El tipo vehiculo no exite o no es valido"))
     }
 

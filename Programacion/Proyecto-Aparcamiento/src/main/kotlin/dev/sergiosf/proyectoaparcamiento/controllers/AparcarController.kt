@@ -1,9 +1,5 @@
 package dev.sergiosf.proyectoaparcamiento.controllers
 
-import com.github.michaelbull.result.Err
-import com.github.michaelbull.result.Ok
-import com.github.michaelbull.result.Result
-import dev.sergiosf.proyectoaparcamiento.errors.VehiculoError
 import dev.sergiosf.proyectoaparcamiento.models.Aparcamiento
 import dev.sergiosf.proyectoaparcamiento.models.Vehiculo
 import dev.sergiosf.proyectoaparcamiento.viewmodels.AparcamientoViewModels
@@ -13,11 +9,11 @@ import javafx.scene.control.*
 import mu.KotlinLogging
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import java.time.LocalDate
+
 
 private val logger = KotlinLogging.logger {}
 
-class AparcarController: KoinComponent {
+class AparcarController : KoinComponent {
     @FXML
     lateinit var btnAgregar: Button
 
@@ -91,9 +87,9 @@ class AparcarController: KoinComponent {
     }
 
     private fun onAparcarAction() {
-        logger.debug { "Aparcando un vehiculo ${textTipoVehiculo.text}"}
+        logger.debug { "Aparcando un vehiculo ${textTipoVehiculo.text}" }
 
-        if (comboMatricula.value.isEmpty()){
+        if (comboMatricula.value.isEmpty()) {
             return
         }
         Alert(Alert.AlertType.CONFIRMATION).apply {
@@ -104,6 +100,7 @@ class AparcarController: KoinComponent {
             if (buttonType == ButtonType.OK) {
                 if (viewModel.isAparcadoByMatricula(comboMatricula.value)) {
                     viewModel.ocuparPlaza(recogerDatosFormulario())
+                    cerrarVentana()
                 } else {
                     Alert(Alert.AlertType.ERROR).apply {
                         title = "Vehiculo ya aparcado"
@@ -116,7 +113,7 @@ class AparcarController: KoinComponent {
     }
 
     private fun onComboSelected(newValue: String) {
-        logger.debug { "onComboSelected $newValue"}
+        logger.debug { "onComboSelected $newValue" }
         loadForumualrioData(newValue)
     }
 
@@ -127,7 +124,6 @@ class AparcarController: KoinComponent {
             tipoVehiculo = Vehiculo.TipoVehiculo.valueOf(textTipoVehiculo.text)
         )
     }
-
 
     private fun loadForumualrioData(newValue: String) {
 

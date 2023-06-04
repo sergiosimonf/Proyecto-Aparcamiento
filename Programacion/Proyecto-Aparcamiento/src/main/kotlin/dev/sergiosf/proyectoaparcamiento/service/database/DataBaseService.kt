@@ -110,10 +110,10 @@ class DataBaseService(
 
         val datosEjemplo = mutableListOf<Vehiculo>()
 
-        datosEjemplo.add(Vehiculo("","", "", "", Vehiculo.TipoVehiculo.NONE))
-        datosEjemplo.add(Vehiculo("1234XHS","53906421X", "Ford", "Mustang", Vehiculo.TipoVehiculo.Combustion))
-        datosEjemplo.add(Vehiculo("7895VGT","55555555B", "Honda", "Civic", Vehiculo.TipoVehiculo.Híbrido))
-        datosEjemplo.add(Vehiculo("6969KFC","99999999D", "Volkswagen", "Golf", Vehiculo.TipoVehiculo.Eléctrico))
+        datosEjemplo.add(Vehiculo("", "", "", "", Vehiculo.TipoVehiculo.NONE))
+        datosEjemplo.add(Vehiculo("1234XHS", "53906421X", "Ford", "Mustang", Vehiculo.TipoVehiculo.Combustion))
+        datosEjemplo.add(Vehiculo("7895VGT", "55555555B", "Honda", "Civic", Vehiculo.TipoVehiculo.Híbrido))
+        datosEjemplo.add(Vehiculo("6969KFC", "99999999D", "Volkswagen", "Golf", Vehiculo.TipoVehiculo.Eléctrico))
 
 
         fun save(vehiculo: Vehiculo): Vehiculo {
@@ -171,7 +171,7 @@ class DataBaseService(
             return profesor
         }
 
-        fun saveAll(profesores : List<Profesor>): List<Profesor> {
+        fun saveAll(profesores: List<Profesor>): List<Profesor> {
             logger.debug { "Guardando todos los profesores" }
 
             profesores.forEach {
