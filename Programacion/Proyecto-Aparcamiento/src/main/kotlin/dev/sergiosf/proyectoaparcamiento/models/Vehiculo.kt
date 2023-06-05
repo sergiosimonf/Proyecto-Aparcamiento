@@ -1,10 +1,17 @@
 package dev.sergiosf.proyectoaparcamiento.models
 
-data class Vehiculo(
+import com.google.gson.annotations.SerializedName
+
+open class Vehiculo(
+    @SerializedName("matricula")
     val matricula: String,
+    @SerializedName("dniPropietario")
     val dniPropietario: String,
+    @SerializedName("marca")
     val marca: String,
+    @SerializedName("modelo")
     val modelo: String,
+    @SerializedName("tipoVehiculo")
     val tipoVehiculo: TipoVehiculo
 ) {
     enum class TipoVehiculo(val value: String) {

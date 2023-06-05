@@ -97,19 +97,30 @@ class AparcarController : KoinComponent {
             headerText = "¿Desea ocupar la plaza actual?"
             contentText = "Esta acción no se puede deshacer y no permitirá a otros ocupar su puesto."
         }.showAndWait().ifPresent { buttonType ->
-            if (buttonType == ButtonType.OK) {
-                if (viewModel.isAparcadoByMatricula(comboMatricula.value)) {
-                    viewModel.ocuparPlaza(recogerDatosFormulario())
+            val aparcamiento = recogerDatosFormulario()
+            when (buttonType == ButtonType.OK) {
+                !viewModel.isAparcadoByMatricula(comboMatricula.value) -> showAlertOperacion(alerta = Alert.AlertType.ERROR, title = "Vehiculo ya aparcado", header = "El vehiculo ya esta en el aparcamiento", mensaje = "El vehiculo ya esta aparcado. No se puede aparcar dos veces el mismo vehiculo")
+                (viewModel.state.value.numCapacidad > 10) -> showAlertOperacion(alerta = Alert.AlertType.ERROR, title = "No caben más vehículos", header = "Se ha alcanzado el número máximo de vehículos", mensaje = "No se pueden introducir más vehículos en el sistema debido a que esta esta completo")
+                ((aparcamiento.tipoVehiculo.value == Vehiculo.TipoVehiculo.Eléctrico.value) && (viewModel.state.value.numVehiculosElectricos > 2)) -> showAlertOperacion(alerta = Alert.AlertType.ERROR, title = "No caben más vehículos eléctricos", header = "Se ha alcanzado el número máximo de vehículos eléctricos", mensaje = "Ya hay 2 vehículos eléctricos ocupando la plaza reservada para este tipo de vehículo")
+                else -> {
+                    viewModel.ocuparPlaza(aparcamiento)
                     cerrarVentana()
-                } else {
-                    Alert(Alert.AlertType.ERROR).apply {
-                        title = "Vehiculo ya aparcado"
-                        headerText = "El vehiculo ya esta en el aparcamiento"
-                        contentText = "El vehiculo ya esta aparcado. No se puede aparcar dos veces el mismo vehiculo"
-                    }.showAndWait()
                 }
             }
         }
+    }
+
+    private fun showAlertOperacion(
+        alerta: Alert.AlertType = Alert.AlertType.ERROR,
+        title: String = "",
+        header: String = "",
+        mensaje: String = ""
+    ) {
+        Alert(alerta).apply {
+            this.title = title
+            this.headerText = header
+            this.contentText = mensaje
+        }.showAndWait()
     }
 
     private fun onComboSelected(newValue: String) {

@@ -1,22 +1,28 @@
 package dev.sergiosf.proyectoaparcamiento.dto
 
+import com.google.gson.annotations.SerializedName
 import dev.sergiosf.proyectoaparcamiento.models.Vehiculo
 
-class vehiculoDto (
-    val matricula: String,
-    val dniPropietario: String,
-    val marca: String,
-    val modelo: String,
-    val tipoVehiculo: String
+data class VehiculoDto (
+    @SerializedName("matricula")
+    var matricula: String,
+    @SerializedName("dniPropietario")
+    var dniPropietario: String,
+    @SerializedName("marca")
+    var marca: String,
+    @SerializedName("modelo")
+    var modelo: String,
+    @SerializedName("tipoVehiculo")
+    var tipoVehiculo: String
 )
 
 
-fun List<Vehiculo>.toDto() : List<vehiculoDto> {
+fun List<Vehiculo>.toListDto() : List<VehiculoDto> {
     return map { it.toDto() }
 }
 
-fun Vehiculo.toDto() : vehiculoDto {
-    return vehiculoDto(
+fun Vehiculo.toDto() : VehiculoDto {
+    return VehiculoDto(
         this.matricula,
         this.dniPropietario,
         this.marca,
@@ -25,7 +31,7 @@ fun Vehiculo.toDto() : vehiculoDto {
     )
 }
 
-fun vehiculoDto.toVehiculo() : Vehiculo {
+fun VehiculoDto.toVehiculo() : Vehiculo {
     return Vehiculo(
         this.matricula,
         this.dniPropietario,
@@ -35,6 +41,6 @@ fun vehiculoDto.toVehiculo() : Vehiculo {
     )
 }
 
-fun List<vehiculoDto>.toVehiculo() : List<Vehiculo> {
+fun List<VehiculoDto>.toListVehiculo() : List<Vehiculo> {
     return map { it.toVehiculo() }
 }

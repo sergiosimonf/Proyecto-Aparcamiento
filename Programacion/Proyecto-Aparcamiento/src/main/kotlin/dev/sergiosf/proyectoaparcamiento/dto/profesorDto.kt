@@ -1,27 +1,30 @@
 package dev.sergiosf.proyectoaparcamiento.dto
 
+import com.google.gson.annotations.SerializedName
 import dev.sergiosf.proyectoaparcamiento.models.Profesor
-import dev.sergiosf.proyectoaparcamiento.models.Vehiculo
 
-class profesorDto (
-    val dni: String,
-    val nombre: String,
-    val apellido: String
+open class ProfesorDto (
+    @SerializedName("dni")
+    var dni: String,
+    @SerializedName("nombre")
+    var nombre: String,
+    @SerializedName("apellido")
+    var apellido: String
 )
 
-fun List<Profesor>.toDto() : List<profesorDto> {
+fun List<Profesor>.toListDto() : List<ProfesorDto> {
     return map { it.toDto() }
 }
 
-fun Profesor.toDto() : profesorDto {
-    return profesorDto(
+fun Profesor.toDto() : ProfesorDto {
+    return ProfesorDto(
         this.dni,
         this.nombre,
         this.apellido
     )
 }
 
-fun profesorDto.toProfesor() : Profesor {
+fun ProfesorDto.toProfesor() : Profesor {
     return Profesor(
         this.dni,
         this.nombre,
@@ -29,6 +32,6 @@ fun profesorDto.toProfesor() : Profesor {
     )
 }
 
-fun List<profesorDto>.toVehiculo() : List<Profesor> {
+fun List<ProfesorDto>.toListVehiculo() : List<Profesor> {
     return map { it.toProfesor() }
 }

@@ -1,7 +1,12 @@
 package dev.sergiosf.proyectoaparcamiento.models
 
-data class Profesor(
-    val dni: String,
-    val nombre: String,
-    val apellido: String
+import com.google.gson.annotations.SerializedName
+
+open class Profesor(
+    @SerializedName("dni")
+    var dni: String,
+    @SerializedName("nombre")
+    var nombre: String,
+    @SerializedName("apellido")
+    var apellido: String
 )
