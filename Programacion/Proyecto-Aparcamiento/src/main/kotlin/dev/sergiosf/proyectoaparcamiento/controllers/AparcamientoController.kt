@@ -208,6 +208,7 @@ class AparcamientoController : KoinComponent {
             viewModel.saveBackupData(it)
                 .onSuccess {
                     showAlertOperacion(
+                        alerta = Alert.AlertType.INFORMATION,
                         title = "Datos exportados",
                         header = "Datos exportados correctamente a fichero JSON",
                         mensaje = "Se ha exportado tus datos desde el fichero de gestión.\nVehículos y propietarios exportados: ${viewModel.state.value.vehiculos.size}"

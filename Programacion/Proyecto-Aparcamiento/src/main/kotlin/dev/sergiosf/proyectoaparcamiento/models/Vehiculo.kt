@@ -1,6 +1,7 @@
 package dev.sergiosf.proyectoaparcamiento.models
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 open class Vehiculo(
     @SerializedName("matricula")
@@ -13,7 +14,7 @@ open class Vehiculo(
     val modelo: String,
     @SerializedName("tipoVehiculo")
     val tipoVehiculo: TipoVehiculo
-) {
+):Serializable {
     enum class TipoVehiculo(val value: String) {
         Combustion("Combustion"), Híbrido("Híbrido"), Eléctrico("Eléctrico"), NONE("")
     }

@@ -8,6 +8,5 @@ import java.io.File
 
 
 interface StorageAparcamiento {
-    fun load()
     fun save(file: File, vehiculos: List<Vehiculo>, profesor: List<Profesor>): Result<Long, VehiculoError>
 }
