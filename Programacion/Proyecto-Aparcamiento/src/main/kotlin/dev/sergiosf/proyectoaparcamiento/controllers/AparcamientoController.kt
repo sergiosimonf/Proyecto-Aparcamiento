@@ -23,9 +23,6 @@ private val logger = KotlinLogging.logger {}
 class AparcamientoController : KoinComponent {
 
     @FXML
-    lateinit var menuImportar: MenuItem
-
-    @FXML
     lateinit var menuExportar: MenuItem
 
     @FXML
@@ -154,10 +151,6 @@ class AparcamientoController : KoinComponent {
 
         menuExportar.setOnAction {
             onExportarAction()
-        }
-
-        menuImportar.setOnAction {
-
         }
 
         // Botones

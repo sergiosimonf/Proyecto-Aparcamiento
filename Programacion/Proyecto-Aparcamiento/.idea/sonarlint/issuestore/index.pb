@@ -8,8 +8,6 @@ N
 .gitignore,a\5\a5cc2925ca8258af241be7e5b0381edf30266302
 <
 build.gradle,f\0\f07866736216be0ee2aba49e392191aeae700a35
-
-Qsrc/main/kotlin/dev/sergiosf/proyectoaparcamiento/validators/ProfesorValidator.kt,f\7\f78f97fee0c3c8de9e550d36794f646dd6a043b8
 €
 Psrc/main/kotlin/dev/sergiosf/proyectoaparcamiento/validators/AparcarValidator.kt,a\7\a7403fe3243869ae842857af19041f9bf8333497
 …
@@ -22,10 +20,6 @@ Esrc/main/kotlin/dev/sergiosf/proyectoaparcamiento/config/AppConfig.kt,6\f\6ff5
 esrc/main/kotlin/dev/sergiosf/proyectoaparcamiento/repositories/aparcamiento/AparcamientoRepository.kt,0\b\0b0273c256e7dcabe12c12005715c07d15ea64f4
 y
 Isrc/main/kotlin/dev/sergiosf/proyectoaparcamiento/errors/AparcadoError.kt,7\a\7a31675e9f50e57d658482377a9976f3fbcbe01d
-s
-Csrc/main/kotlin/dev/sergiosf/proyectoaparcamiento/di/AppDiModule.kt,1\9\196e28462e9d0e080bac27842b0481f6f7fb8730
-„
-Tsrc/main/kotlin/dev/sergiosf/proyectoaparcamiento/controllers/GestionarController.kt,0\0\00c8e6b414236cb1826907ec14b1491ff0f053a8
 x
 Hsrc/main/kotlin/dev/sergiosf/proyectoaparcamiento/errors/PersonaError.kt,d\b\db02dba57a650a1a9f4621e999bc748f2dc315ae
 r
@@ -36,14 +30,8 @@ isrc/main/kotlin/dev/sergiosf/proyectoaparcamiento/repositories/aparcamiento/Apa
 ]src/main/kotlin/dev/sergiosf/proyectoaparcamiento/repositories/profesor/ProfesorRepository.kt,a\7\a7c1dc2a41a1de014e4b31d3ef118e08e0a04778
 ’
 bsrc/main/kotlin/dev/sergiosf/proyectoaparcamiento/repositories/vehiculo/VehiculosRepositoryImpl.kt,3\a\3a33f6a862a2673d344daa927bc906451c475cc3
-…
-Usrc/main/kotlin/dev/sergiosf/proyectoaparcamiento/service/database/DataBaseService.kt,9\6\9610248d82e143dc48d4e7d04d7a4d35d8f1e2c5
 y
 Isrc/main/kotlin/dev/sergiosf/proyectoaparcamiento/routes/RoutesManager.kt,7\1\71ef4b761b9b41d586395590cc715682c9abbd5b
-‘
-asrc/main/kotlin/dev/sergiosf/proyectoaparcamiento/repositories/profesor/ProfesorRepositoryImpl.kt,9\7\9763ba063a1de1493e202e4c36fc44b24d3d18cb
-
-Qsrc/main/kotlin/dev/sergiosf/proyectoaparcamiento/validators/VehiculoValidator.kt,0\e\0ef4f0e3d02230b278a5d6aa7e36f49df120e655
 x
 Hsrc/main/kotlin/dev/sergiosf/proyectoaparcamiento/models/Aparcamiento.kt,4\6\4613b0b289915f55a137802d1e96cc06e0505175
 y
@@ -71,10 +59,4 @@ Vsrc/main/kotlin/dev/sergiosf/proyectoaparcamiento/viewmodels/AparcamientoViewMo
 |
 Lsrc/main/kotlin/dev/sergiosf/proyectoaparcamiento/AparcamientoApplication.kt,b\7\b713b296642f85a93e40e27a9a6ad6d7a9a0d6d6
 ‡
-Wsrc/main/kotlin/dev/sergiosf/proyectoaparcamiento/controllers/AparcamientoController.kt,a\8\a82b8f0e43cc4a9f8b0992656bceec15237e25b5
-‡
 Wsrc/main/kotlin/dev/sergiosf/proyectoaparcamiento/service/storage/VehiculodtoAdapter.kt,3\5\35b1ac76bb20f4279ccaeb17a9826f6784308e72
-ˆ
-Xsrc/main/kotlin/dev/sergiosf/proyectoaparcamiento/service/storage/StorageAparcamiento.kt,0\8\0804479abca5be233b6145e8d0c6635cf5707750
-Œ
-\src/main/kotlin/dev/sergiosf/proyectoaparcamiento/service/storage/StorageAparcameintoImpl.kt,6\d\6d935ddef14a08489d08a301b77167205a9455cf
